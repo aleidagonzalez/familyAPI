@@ -42,3 +42,45 @@ def handle_hello():
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=True)
+   
+
+@app.route('/member', methods=["POST"])
+def cretate_member():
+    try:
+        member = {
+            "id": request.json["id"],
+            "first_name": request.json["first_name"],
+            "last_name": "Jackson",
+            "age": request.json["age"],
+            "lucky_numbers": request.json["lucky_numbers"]
+        }
+        create = jackson_family.add_member(member)
+        if(create == 200):
+            return jsonify('todo bien'), 200
+
+    except ValueError as err:
+        print('VALUES ERROR', err)
+        return jsonify('Internal server error'), 500
+
+    except Exception as err:
+        print('IOS ERROR', err)
+        return jsonify('Bad request'), 405
+
+    except:
+        print('Except')
+        return jsonify('Internal server error'), 500
+
+@app.route('/member/<int:id>', methods=["DELETE"])
+def delete_member(id):
+    user = jackson_family.delete_member(id)
+    print(user)
+    if user:
+        return jsonify({"done": True}), 200
+    
+    return jsonify('bad request'), 404
+
+
+# this only runs if `$ python src/app.py` is executed
+if __name__ == '__main__':
+    PORT = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=PORT, debug=True)
